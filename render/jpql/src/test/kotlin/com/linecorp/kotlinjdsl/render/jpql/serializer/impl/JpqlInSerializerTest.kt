@@ -88,4 +88,26 @@ class JpqlInSerializerTest : WithAssertions {
             writer.write("0 = 1")
         }
     }
+
+    @Test
+    fun `serialize() draws eq, when there is one in the compareValues`() {
+        // given
+        val part = Predicates.`in`(
+            expression1,
+            listOf(expression2),
+        )
+        val context = TestRenderContext(serializer)
+
+        // when
+        sut.serialize(part as JpqlIn<*>, writer, context)
+
+        // then
+        verifySequence {
+            serializer.serialize(expression1, writer, context)
+            writer.write(" ")
+            writer.write("=")
+            writer.write(" ")
+            serializer.serialize(expression2, writer, context)
+        }
+    }
 }
