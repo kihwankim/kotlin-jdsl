@@ -23,13 +23,20 @@ class JpqlInSerializer : JpqlSerializer<JpqlIn<*>> {
         } else {
             delegate.serialize(part.value, writer, context)
 
-            writer.write(" ")
-            writer.write("IN")
-            writer.write(" ")
+            if (part.compareValues.count() == 1) {
+                writer.write(" ")
+                writer.write("=")
+                writer.write(" ")
+                delegate.serialize(part.compareValues.first(), writer, context)
+            } else {
+                writer.write(" ")
+                writer.write("IN")
+                writer.write(" ")
 
-            writer.writeParentheses {
-                writer.writeEach(part.compareValues, separator = ", ") {
-                    delegate.serialize(it, writer, context)
+                writer.writeParentheses {
+                    writer.writeEach(part.compareValues, separator = ", ") {
+                        delegate.serialize(it, writer, context)
+                    }
                 }
             }
         }
